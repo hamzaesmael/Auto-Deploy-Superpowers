@@ -19,7 +19,7 @@ commands:
             aws cloudformation delete-stack --stack-name backend-<< parameters.workflow-id >>
             aws cloudformation delete-stack --stack-name frontend-<< parameters.workflow-id >>
             aws s3 rm s3://udapeople-<< parameters.workflow-id >> --recursive
-            aws s3 rb s3://bucket-name --force
+            aws s3 rb s3://udapeople-<< parameters.workflow-id >> --force
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -162,7 +162,7 @@ jobs:
 
   config-infra:
     docker:
-      - image: ansible/ansible
+      - image: cimg/python:3.8.6
     steps:
       - checkout
       - add_ssh_keys:
@@ -171,6 +171,9 @@ jobs:
           name: Install awscli
           command: |
             apt install awscli
+            apt install python-pip
+            pip install ansible
+            
       - run:
           name: get The backend server ip
           command: |

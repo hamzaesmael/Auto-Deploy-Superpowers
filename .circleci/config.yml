@@ -214,3 +214,6 @@ workflows:
           filters:
             branches:
               only: master
+      - config-infra:
+          requires:
+            - deploy-infra

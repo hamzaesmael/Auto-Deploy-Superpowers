@@ -160,7 +160,7 @@ jobs:
             --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
 
-  config-infra:
+  config-infrastucture:
     docker:
       - image: ansible/ansible
     steps:
@@ -185,7 +185,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
-          workflow_id: $CIRCLE_WORKFLOW_ID:0:7
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   
 workflows:
@@ -215,6 +215,6 @@ workflows:
           filters:
             branches:
               only: master
-      - config-infra:
+      - config-infrastucture:
           requires:
             - deploy-infra

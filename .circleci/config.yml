@@ -148,6 +148,7 @@ jobs:
       - run:
           name: Deploy frontend infrastructure or checking if it exists
           command: |
+            cd .circleci/files
             aws cloudformation deploy \
             --template-file frontend.yml \
             --tags project=udapeople \

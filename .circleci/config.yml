@@ -160,19 +160,17 @@ jobs:
             --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
 
-  config-infrastucture:
+  config-infra:
     docker:
-      - image: cimg/python:3.8.6
+      - image: ansible/ansible
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
       - run:
-          name: Install dependencies
+          name: Install awscli
           command: |
-            sudo apt-get update && sudo apt-get install -y python3-pip
-            pip3 install ansible
-            pip3 install awscli
+            apt install awscli
       - run:
           name: get The backend server ip
           command: |
@@ -187,11 +185,11 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+          workflow-id: $CIRCLE_WORKFLOW_ID:0:7
 
   
 workflows:
-  workflow:
+  default:
     jobs:
       - build-frontend
       - build-backend
@@ -217,6 +215,6 @@ workflows:
           filters:
             branches:
               only: master
-      - config-infrastucture:
+      - config-infra:
           requires:
             - deploy-infra

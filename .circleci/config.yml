@@ -162,15 +162,17 @@ jobs:
 
   config-infrastucture:
     docker:
-      - image: ansible/ansible
+      - image: cimg/python:3.8.6
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
       - run:
-          name: Install awscli
+          name: Install dependencies
           command: |
-            apt install awscli
+            sudo apt-get update && sudo apt-get install -y python3-pip
+            pip3 install ansible
+            pip3 install awscli
       - run:
           name: get The backend server ip
           command: |

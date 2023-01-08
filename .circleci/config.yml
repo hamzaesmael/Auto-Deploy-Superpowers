@@ -7,14 +7,19 @@ commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
-      # Add parameter here   
+      workflow-id:
+        type: string
+        description: The workflow ID to use to find the back-end and front-end stacks.
     steps:
       - run:
           name: Destroy environments
           when: on_fail
           command: |
-            # Your code here
-            exit 1
+            echo "Destroying back-end and front-end stacks for workflow ID << parameters.workflow-id >>"
+            aws cloudformation delete-stack --stack-name backend-<< parameters.workflow-id >>
+            aws cloudformation delete-stack --stack-name frontend-<< parameters.workflow-id >>
+            aws s3 rm s3://udapeople-<< parameters.workflow-id >> --recursive
+            aws s3 rb s3://bucket-name --force
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -160,9 +165,11 @@ jobs:
       - image: ansible/ansible
     steps:
       - checkout
-      - install-aws-cli
       - add_ssh_keys:
           fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
+      - run: Install dependencies
+          command: |
+            apt install awscli
       - run:
           name: get The backend server ip
           command: |
@@ -176,7 +183,10 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment:
+          workflow_id: $CIRCLE_WORKFLOW_ID:0:7
 
+  
 workflows:
   default:
     jobs:

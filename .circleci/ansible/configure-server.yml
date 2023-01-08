@@ -1,5 +1,4 @@
 ---
-
 - name: "configuration play." 
   hosts: web
   user: ubuntu
@@ -25,4 +24,4 @@
     # Add more env vars here
 
   roles:
-    # Your code here
+    - setup

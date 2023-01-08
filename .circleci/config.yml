@@ -154,6 +154,29 @@ jobs:
             --tags project=udapeople \
             --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7} \
+
+  config-infra:
+    docker:
+      - image: ansible/ansible
+    steps:
+      - checkout
+      - install-aws-cli
+      - add_ssh_keys:
+          fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
+      - run:
+          name: get The backend server ip
+          command: |
+          cd .circleci/ansible
+          aws ec2 describe-instances\
+          --query 'Reservations[*].Instances[*].PublicIpAddress'\
+          --filters "Name=tag:project,Values=udapeople"\
+          --output text >> inventory.txt
+      - run:
+          name: Configure backend infrastructure
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+
 workflows:
   default:
     jobs:

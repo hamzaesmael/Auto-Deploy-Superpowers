@@ -1,0 +1,19 @@
+- name: upgrade and update packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: install nodejs
+  apt:
+    name: nodejs
+    state: present
+    
+- name: install npm
+  apt:
+    name: npm
+    state: present
+
+- name: install pm2
+  npm:
+    name: pm2
+    global: yes

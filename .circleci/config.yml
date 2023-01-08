@@ -167,7 +167,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
-      - run: Install dependencies
+      - run:
+          name: Install dependencies
           command: |
             apt install awscli
       - run:

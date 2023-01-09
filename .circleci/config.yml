@@ -266,8 +266,6 @@ jobs:
           fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
       - restore_cache:
           keys: [backend-build]
-      - attach_workspace:
-          at: ~/
       - run:
           name: install dependencies
           command: |
@@ -294,7 +292,7 @@ jobs:
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
-            cp ./artifact.tar.gz .circleci/ansible/roles/deploy/files
+            cp ./artifact.tar.gz ./.circleci/ansible/roles/deploy/files
       - run:
           name: deploy backend
           command: |

@@ -16,8 +16,8 @@ commands:
           when: on_fail
           command: |
             echo "Destroying back-end and front-end stacks for workflow ID << parameters.workflow-id >>"
-            aws cloudformation delete-stack --stack-name backend-<< parameters.workflow-id >>
-            aws cloudformation delete-stack --stack-name frontend-<< parameters.workflow-id >>
+            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow-id >>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow-id >>
             aws s3 rm s3://udapeople-<< parameters.workflow-id >> --recursive
             aws s3 rb s3://udapeople-<< parameters.workflow-id >> --force
 
@@ -162,7 +162,7 @@ jobs:
 
   config-infra:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: cimg/python:3.8
     steps:
       - checkout
       - add_ssh_keys:
@@ -180,7 +180,8 @@ jobs:
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople" \
-            --output text >> inventory.txt
+            --output text >> inventory.txt 
+            cat inventory.txt
       - run:
           name: Configure backend infrastructure
           command: |
@@ -188,6 +189,32 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+
+  run-migration:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Run Migration
+          command: |
+            cd backend
+            cat .env
+            npm i
+            npm run migrations > migration_dump.log
+      - run:
+          name: Check if migration is successful
+          command: |
+            cd backend
+            if grep -q "successfully" ./backend/migration_dump.log; then
+              echo "Migration successful"
+              curl https://kvdb.io/UieMt2AAJFwXs3CFpSvbva/migration-${CIRCLE_WORKFLOW_ID:0:7} -d "1"
+            else
+              echo "Migration failed"
+              exit 1
+            fi
 
   
 workflows:

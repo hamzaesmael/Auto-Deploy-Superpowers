@@ -15,8 +15,7 @@
   unarchive:
     src: artifact.tar.gz
     dest: ~/backend
-    remote_src: yes
-
+    
 - name: "install node dependencies"
   command: npm install
   args:

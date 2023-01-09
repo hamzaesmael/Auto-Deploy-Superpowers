@@ -36,7 +36,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$(curl --insecure  https://kvdb.io/UieMt2AAJFwXs3CFpSvbva/migration-<< parameters.workflow_id >>)
+            SUCCESS=$(curl https://kvdb.io/UieMt2AAJFwXs3CFpSvbva/migration-<< parameters.workflow_id >>)
             echo $SUCCESS
             if [[ $SUCCESS == 1 ]]; 
             then
@@ -285,15 +285,19 @@ jobs:
             --filters "Name=tag:project,Values=udapeople" \
             --output text >> .circleci/ansible/inventory.txt 
             cat .circleci/ansible/inventory.txt
+      
       - run:
-          name: deploy backend
+          name: archive artifacts of backend
           command: |
             cd backend
             npm i
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
-            cp ./artifact.tar.gz .circleci/ansible/roles/deploy/files
+            cp artifact.tar.gz .circleci/ansible/roles/deploy/files
+      - run:
+          name: deploy backend
+          command: |
             cd .circleci/ansible
             echo "Content of inventory.txt"
             cat inventory.txt

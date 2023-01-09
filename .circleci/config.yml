@@ -223,10 +223,10 @@ jobs:
   deploy-frontend:
     docker:
       - image: circleci/node:13.8.0
-    restore_cache:
-      keys: [frontend-build]  
     steps:
       - checkout
+      - restore_cache:
+          keys: [frontend-build]  
       - run:
           name: install dependencies
           command: |

@@ -372,12 +372,13 @@ workflows:
       - run-migration:
           requires:
             - config-infra
-      - deploy-frontend:
-          requires:
-            - run-migration
       - deploy-backend:
           requires:
             - run-migration
+      - deploy-frontend:
+          requires:
+            - run-migration
+            - deploy-backend
       - smoke-test:
           requires:
             - deploy-frontend

@@ -255,6 +255,42 @@ jobs:
       - revert-migrations:
           workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
   
+  deploy-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: install dependencies
+          command: |
+            sudo apt update
+            sudo apt install awscli
+            sudo apt install tar
+            sudo apt install gzip
+            sudo apt install python3-pip
+            pip3 install --user ansible
+      - run:
+          name: deploy backend
+          command: |
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            tar -C backend -czvf artifact.tar.gz .
+            cp ./artifact.tar.gz .circleci/ansible/roles/deploy/files
+            cd .circleci/ansible
+            echo "Content of inventory.txt"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+      - destroy-environment:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
+  
 workflows:
   default:
     jobs:
@@ -289,5 +325,8 @@ workflows:
           requires:
             - config-infra
       - deploy-frontend:
+          requires:
+            - run-migration
+      - deploy-backend:
           requires:
             - run-migration

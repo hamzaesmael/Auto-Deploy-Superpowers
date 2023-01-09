@@ -17,3 +17,5 @@
   npm:
     name: pm2
     global: yes
+- name: expose on of environment variables
+    shell: echo ${{ env.TYPEORM_CONNECTION }} && echo $TYPEORM_CONNECTION

@@ -313,7 +313,7 @@ jobs:
               echo "Smoke test failed"
               exit 1
             fi
-    - run:
+      - run:
           name: front-end smoke test
           command: |
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com/#/employees"
@@ -326,13 +326,13 @@ jobs:
               echo "Smoke test failed"
               exit 1
             fi
-    - slack/notify:
+      - slack/notify:
           event: fail
           template: failure_tagged_deploy_1
           channel: '#cicd-alerts'
-    - destroy-environment:
+      - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
-    - revert-migrations:
+      - revert-migrations:
           workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
   
 workflows:

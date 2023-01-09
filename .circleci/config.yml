@@ -24,7 +24,7 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      workflow-id:
+      workflow_id:
         type: string
         description: The workflow ID to find the last successful migration.    
     steps:
@@ -254,7 +254,7 @@ jobs:
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
-          workflow-id: migration-${CIRCLE_WORKFLOW_ID:0:7}
+          workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
   
 workflows:
   default:

@@ -24,20 +24,22 @@ commands:
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
-      # Add parameter here     
+      workflow-id:
+        type: string
+        description: The workflow ID to find the last successful migration.    
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            SUCCESS=$(curl --insecure  https://kvdb.io/UieMt2AAJFwXs3CFpSvbva/migration-<< parameters.workflow_id >>)
             SUCCESS = 1
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+               cd ~/project/backend
+               npm install
+               npm run migrate:revert
             fi
             
 jobs:
@@ -237,7 +239,22 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople" \
             --output text)
-    
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API URL= ${API_URL}"
+            echo API_URL=${API_URL} >> frontend/.env
+            cat frontend/.env
+      - run:
+          name: Deploy frontend
+          command: |
+            cd frontend
+            npm i
+            npm run build
+            tar -czvf artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
+            aws s3 cp dist s3//udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migration:
+          workflow-id: migrati${CIRCLE_WORKFLOW_ID:0:7}
   
 workflows:
   default:
@@ -272,3 +289,6 @@ workflows:
       - run-migration:
           requires:
             - config-infra
+      - deploy-frontend:
+          requires:
+            - run-migration

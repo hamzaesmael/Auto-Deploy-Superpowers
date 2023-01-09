@@ -247,3 +247,6 @@ workflows:
       - config-infra:
           requires:
             - deploy-infra
+      - run-migration:
+          requires:
+            - config-infra

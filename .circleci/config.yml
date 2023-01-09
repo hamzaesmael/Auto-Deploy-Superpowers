@@ -207,6 +207,8 @@ jobs:
           command: |
             cd backend
             npm i
+            npm fund
+            npm audit fix --audit-level=critical --force
             npm run migrations > migration_dump.log
       - run:
           name: Check if migration is successful

@@ -291,6 +291,50 @@ jobs:
       - revert-migrations:
           workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
   
+  smoke-test:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: backend smoke test
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Name,Values= backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API URL= ${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+              echo "Smoke test passed"
+              return 0
+            else
+              echo "Smoke test failed"
+              exit 1
+            fi
+    - run:
+          name: front-end smoke test
+          command: |
+            URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com/#/employees"
+            if curl -s ${URL} | grep "Welcome"
+            then
+              echo "Smoke test passed"
+              # change this to 0 to after fail
+              return 1
+            else
+              echo "Smoke test failed"
+              exit 1
+            fi
+    - slack/notify:
+          event: fail
+          template: failure_tagged_deploy_1
+          channel: '#cicd-alerts'
+    - destroy-environment:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+    - revert-migrations:
+          workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
+  
 workflows:
   default:
     jobs:
@@ -330,3 +374,7 @@ workflows:
       - deploy-backend:
           requires:
             - run-migration
+      - smoke-test:
+          requires:
+            - deploy-frontend
+            - deploy-backend

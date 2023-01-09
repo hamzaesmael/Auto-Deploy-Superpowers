@@ -209,6 +209,7 @@ jobs:
       - run: 
           name: run migration
           command: |
+            cd backend
             npm i
             npm run premigrations
             npm run migrations > migration_dump.log

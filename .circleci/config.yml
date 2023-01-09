@@ -28,6 +28,9 @@ commands:
         type: string
         description: The workflow ID to find the last successful migration.    
     steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Revert migrations
           when: on_fail

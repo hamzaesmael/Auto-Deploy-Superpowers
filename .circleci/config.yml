@@ -254,7 +254,7 @@ jobs:
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
-          workflow-id: migrati${CIRCLE_WORKFLOW_ID:0:7}
+          workflow-id: migration-${CIRCLE_WORKFLOW_ID:0:7}
   
 workflows:
   default:

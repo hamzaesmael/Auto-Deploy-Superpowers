@@ -278,6 +278,14 @@ jobs:
             sudo apt install python3-pip
             pip3 install --user ansible
       - run:
+          name: get backend ip
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:project,Values=udapeople" \
+            --output text >> ~/circleci/ansible/inventory.txt 
+            cat inventory.txt
+      - run:
           name: deploy backend
           command: |
             cd backend

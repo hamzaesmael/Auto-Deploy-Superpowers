@@ -200,10 +200,6 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - run:
-          name: go to backend directory
-          command: |
-            cd backend
       - restore_cache:
           keys: [backend-build]
       - run: 
@@ -211,7 +207,6 @@ jobs:
           command: |
             cd backend
             npm i
-            npm run premigrations
             npm run migrations > migration_dump.log
       - run:
           name: Check if migration is successful

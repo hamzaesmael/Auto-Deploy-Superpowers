@@ -213,7 +213,7 @@ jobs:
           name: Check if migration is successful
           command: |
             cd backend
-            if grep -q "successfully" ~/project/backend/migrations_dump.log; then
+            if grep -q "ts-node" ~/project/backend/migrations_dump.log; then
               echo "Migration successful"
               curl https://kvdb.io/UieMt2AAJFwXs3CFpSvbva/migration-${CIRCLE_WORKFLOW_ID:0:7} -d "1"
             else

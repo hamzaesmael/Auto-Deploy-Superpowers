@@ -16,10 +16,6 @@
     src: artifact.tar.gz
     dest: ~/backend
     
-- name: "install node dependencies"
-  command: npm install
-  args:
-    chdir: ~/backend
 
 - name: install ans start app
   command: pm2 start main.js

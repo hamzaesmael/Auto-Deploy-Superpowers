@@ -9,6 +9,9 @@
   file:
     path: ~/backend
     state: directory
+    mode: '0775'
+    owner: ubuntu
+    group: ubuntu
 
 - name: "unarchive artifact.tar.gz"
   become: true

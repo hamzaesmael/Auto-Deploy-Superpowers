@@ -77,6 +77,10 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - backend
   
   test-frontend:
     docker:
@@ -266,11 +270,12 @@ jobs:
           fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
       - restore_cache:
           keys: [backend-build]
+      - attach_workspace:
+          at: ~/project
       - run:
           name: install dependencies
           command: |
             apk add --update ansible
-            apk add --update nodejs npm
             apk add curl
             pip3 install awscli
       - run:
@@ -285,11 +290,6 @@ jobs:
       - run:
           name: archive artifacts of backend
           command: |
-            cd backend
-            npm install
-            npm audit fix --force
-            npm run build
-            cd ..
             tar -czf artifact.tar.gz ./backend
             cp ./artifact.tar.gz .circleci/ansible/roles/deploy/files
       - run:

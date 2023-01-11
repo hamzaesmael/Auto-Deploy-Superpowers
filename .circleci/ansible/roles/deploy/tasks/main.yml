@@ -15,11 +15,6 @@
   unarchive:
     src: artifact.tar.gz
     dest: ~/backend
-  register: unarchive_result
-
-- name: "print the stdout"
-  debug:
-    msg: "{{ unarchive_result.stdout }}"
     
 - name: "install node dependencies"
   command: npm install

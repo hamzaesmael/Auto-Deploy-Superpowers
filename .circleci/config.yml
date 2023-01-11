@@ -286,7 +286,7 @@ jobs:
           name: archive artifacts of backend
           command: |
             cd backend
-            npm i
+            npm install --force
             npm run build
             cd ..
             tar -czf artifact.tar.gz ./backend

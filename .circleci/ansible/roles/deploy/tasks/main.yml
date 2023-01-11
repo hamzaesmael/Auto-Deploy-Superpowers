@@ -4,21 +4,16 @@
     update_cache: yes
     upgrade: yes
 
-- name: create backend directory
+- name: copy backend files
   become: true
-  file:
-    path: ~/backend
-    state: directory
+  copy:
+    src: ~/project/backend
+    dest: ~/backend
+    remote_src: yes
     mode: '0775'
     owner: ubuntu
     group: ubuntu
-
-- name: "unarchive artifact.tar.gz"
-  become: true
-  unarchive:
-    src: artifact.tar.gz
-    dest: ~/backend
-    
+  
 
 - name: install ans start app
   command: pm2 start main.js

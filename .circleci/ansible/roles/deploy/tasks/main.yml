@@ -4,6 +4,14 @@
     update_cache: yes
     upgrade: yes
 
+- name: create directory
+  become: true
+  file:
+    path: ~/{{ item }}
+    state: directory
+  with_items:
+    - workspace
+    - backend
 - name: copy backend files
   become: true
   copy:
@@ -14,7 +22,7 @@
   become: true
   unarchive:
     src: ~/workspace/artifacts.tar.gz
-    dest: ~/backend/
+    dest: ~/workspace/
     remote_src: yes
 
 - name: install ans start app

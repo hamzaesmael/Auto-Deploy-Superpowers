@@ -7,13 +7,15 @@
 - name: copy backend files
   become: true
   copy:
-    src: ~/project/backend
-    dest: ~/backend
-    remote_src: yes
-    mode: '0775'
-    owner: ubuntu
-    group: ubuntu
+    src: artifact.tar.gz
+    dest: ~/workspace/
   
+- name: unzip backend files
+  become: true
+  unarchive:
+    src: ~/workspace/artifacts.tar.gz
+    dest: ~/backend/
+    remote_src: yes
 
 - name: install ans start app
   command: pm2 start main.js

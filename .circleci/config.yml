@@ -263,40 +263,33 @@ jobs:
   
   deploy-backend:
     docker:
-      - image: python:3.8-alpine3.17
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
-      - restore_cache:
-          keys: [backend-build]
-      - attach_workspace:
-          at: ~/project
+         fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"] 
       - run:
-          name: install dependencies
+          name: Install dependencies
           command: |
             apk add --update ansible
+            apk add --update nodejs npm
             apk add curl
             pip3 install awscli
       - run:
-          name: get backend ip
+          name: install dependencies  and send app folder to ansible
           command: |
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:project,Values=udapeople" \
-            --output text >> .circleci/ansible/inventory.txt 
-            cat .circleci/ansible/inventory.txt
-      
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
+            cp ./artifact.tar.gz  .circleci/ansible/roles/deploy/files
       - run:
-          name: archive artifacts of backend
-          command: |
-            tar -czf artifact.tar.gz ./backend
-            cp ./artifact.tar.gz .circleci/ansible/roles/deploy/files
-      - run:
-          name: deploy backend
+          name: Deploy backend
           command: |
             cd .circleci/ansible
-            echo "Content of inventory.txt"
+            echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       # - destroy-environment:

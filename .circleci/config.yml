@@ -186,6 +186,11 @@ jobs:
             --output text >> inventory.txt 
             cat inventory.txt
       - run:
+          name: Configure backend with nvm and node
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt nvm-config.yml
+      - run:
           name: Configure backend infrastructure
           command: |
             cd .circleci/ansible

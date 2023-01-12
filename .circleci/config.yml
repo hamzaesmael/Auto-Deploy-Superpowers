@@ -286,6 +286,14 @@ jobs:
             tar -C backend -czvf artifact.tar.gz .
             cp ./artifact.tar.gz  .circleci/ansible/roles/deploy/files
       - run:
+          name: get backend ip
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:project,Values=udapeople" \
+            --output text >> .circleci/ansible/inventory.txt 
+            cat .circleci/ansible/inventory.txt
+      - run:
           name: Deploy backend
           command: |
             cd .circleci/ansible

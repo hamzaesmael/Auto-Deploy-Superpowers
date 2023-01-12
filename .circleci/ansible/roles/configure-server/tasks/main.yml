@@ -6,7 +6,7 @@
 - name: Install nvm
   become: yes
   shell: >
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.1/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
   args:
     executable: /bin/bash
     chdir: "$HOME"
@@ -18,9 +18,14 @@
     path: "$HOME/.nvm/nvm.sh"
     mode: "0775"
     state: file
-    
+
+- name: source bashrc
+  become: no
+  shell: >
+    source $HOME/.bashrc
+
 - name: Install node
-  become: yes
+  become: no
   shell: >
     $HOME/.nvm/nvm.sh && nvm install {{ item }}
   args:

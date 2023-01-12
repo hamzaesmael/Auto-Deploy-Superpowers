@@ -3,28 +3,16 @@
     update_cache: yes
     upgrade: yes
 
-- name: Install nvm
-  become: yes
-  shell: >
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-  args:
-    executable: /bin/bash
-    chdir: "$HOME"
-    creates: "$HOME/.nvm/nvm.sh"
 
-- name: change permission
-  become: yes
-  file:
-    path: "$HOME/.nvm/nvm.sh"
-    mode: "0775"
-    state: file
+- name: check node version and print it to console
+  command: node -v
+  register: node_version
+  msg: "node version is {{ node_version.stdout }}"
 
-- name: Install node
-  become: no
-  shell: >
-    ". $HOME/.bashrc && nvm install {{ item }}"
-  loop:
-    - 13.8.0
+- name: check npm version and print it to console
+  command: npm -v
+  register: npm_version
+  msg: "npm version is {{ npm_version.stdout }}"
 
 - name: install pm2
   npm:

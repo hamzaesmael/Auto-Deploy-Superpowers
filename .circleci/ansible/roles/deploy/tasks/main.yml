@@ -12,6 +12,11 @@
     src: artifact.tar.gz
     dest: ~/backend
 
+- name: check the backend directory
+  command: ls -la ~/backend
+  register: backend_directory
+  msg: "backend directory is {{ backend_directory.stdout }}"
+
 - name: "install node dependencies"
   command: npm i 
   args:

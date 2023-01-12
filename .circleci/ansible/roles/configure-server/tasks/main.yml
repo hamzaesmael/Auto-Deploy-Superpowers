@@ -4,7 +4,7 @@
     upgrade: yes
 
 - name: Install nvm
-  become: no
+  become: yes
   shell: >
     curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.1/install.sh | bash
   args:
@@ -12,7 +12,7 @@
     chdir: "$HOME"
     creates: "$HOME/.nvm/nvm.sh"
 - name: Install node
-  become: no
+  become: yes
   shell: >
     $HOME/.nvm/nvm.sh && nvm install {{ item }}
   args:

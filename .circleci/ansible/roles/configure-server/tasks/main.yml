@@ -11,6 +11,14 @@
     executable: /bin/bash
     chdir: "$HOME"
     creates: "$HOME/.nvm/nvm.sh"
+
+- name: change permission
+  become: yes
+  file:
+    path: "$HOME/.nvm"
+    mode: "0775"
+    state: file
+    
 - name: Install node
   become: yes
   shell: >
@@ -21,10 +29,6 @@
     creates: "$HOME/.nvm/versions/{{ item }}"
   loop:
     - 13.8.0
-- name: install npm
-  apt:
-    name: npm
-    state: present
 
 - name: install pm2
   npm:

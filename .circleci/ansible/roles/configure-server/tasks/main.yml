@@ -14,11 +14,11 @@
 - name: Install node
   become: no
   shell: >
-    . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install {{ item }}
+    $HOME/.nvm/nvm.sh && nvm install {{ item }}
   args:
     executable: /bin/bash
-    chdir: "{{ ansible_env.HOME }}"
-    creates: "{{ ansible_env.HOME }}/.nvm/versions/{{ item }}"
+    chdir: "$HOME"
+    creates: "$HOME/.nvm/versions/{{ item }}"
   loop:
     - 13.8.0
 - name: install npm

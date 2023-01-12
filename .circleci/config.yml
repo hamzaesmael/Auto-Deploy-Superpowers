@@ -254,8 +254,8 @@ jobs:
             cd frontend
             npm i
             npm run build
-            tar -czvf artifact-${CIRCLE_WORKFLOW_ID:0:7}.tar.gz dist
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            cd dist
+            aws s3 sync . s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
       # - destroy-environment:
       #     workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
       # - revert-migrations:
@@ -270,8 +270,6 @@ jobs:
           fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
       - restore_cache:
           keys: [backend-build]
-      - attach_workspace:
-          at: ~/project
       - run:
           name: install dependencies
           command: |

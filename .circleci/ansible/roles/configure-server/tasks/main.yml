@@ -3,14 +3,6 @@
     update_cache: yes
     upgrade: yes
 
-
-- name: check node version and print it to console
-  shell: node -v
-  
-
-- name: check npm version and print it to console
-  shell: npm -v
-
 - name: install pm2
   npm:
     name: pm2

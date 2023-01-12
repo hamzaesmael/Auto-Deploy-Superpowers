@@ -263,28 +263,21 @@ jobs:
   
   deploy-backend:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.8-alpine3.17
     steps:
       - checkout
       - add_ssh_keys:
-         fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"] 
+          fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
+      - restore_cache:
+          keys: [backend-build]
+      - attach_workspace:
+          at: ~/project
       - run:
-          name: Install dependencies
+          name: install dependencies
           command: |
             apk add --update ansible
-            apk add --update nodejs npm
             apk add curl
             pip3 install awscli
-      - run:
-          name: install dependencies  and send app folder to ansible
-          command: |
-            cd backend
-            npm i
-            npm run build
-            cd ..
-            # Zip the directory
-            tar -C backend -czvf artifact.tar.gz .
-            cp ./artifact.tar.gz  .circleci/ansible/roles/deploy/files
       - run:
           name: get backend ip
           command: |
@@ -293,17 +286,23 @@ jobs:
             --filters "Name=tag:project,Values=udapeople" \
             --output text >> .circleci/ansible/inventory.txt 
             cat .circleci/ansible/inventory.txt
+      
       - run:
-          name: Deploy backend
+          name: archive artifacts of backend
+          command: |
+            tar -czf artifact.tar.gz ./backend
+            cp ./artifact.tar.gz .circleci/ansible/roles/deploy/files
+      - run:
+          name: deploy backend
           command: |
             cd .circleci/ansible
-            echo "Contents  of the inventory.txt file is -------"
+            echo "Content of inventory.txt"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      # - destroy-environment:
-      #     workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
-      # - revert-migrations:
-      #     workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
   
   smoke-test:
     docker:

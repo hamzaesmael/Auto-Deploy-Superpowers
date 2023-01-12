@@ -4,14 +4,6 @@
     update_cache: yes
     upgrade: yes
 
-- name: create directory
-  become: true
-  file:
-    path: ~/{{ item }}
-    state: directory
-  with_items:
-    - workspace
-    - backend
 - name: copy backend files
   become: true
   copy:

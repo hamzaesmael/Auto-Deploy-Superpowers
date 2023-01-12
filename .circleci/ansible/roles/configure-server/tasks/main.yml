@@ -5,20 +5,11 @@
 
 
 - name: check node version and print it to console
-  command: node -v
-  register: node_version
+  shell: node -v
   
-- name: print node version
-  debug:
-    msg: "node version is {{ node_version.stdout }}"
 
 - name: check npm version and print it to console
-  command: npm -v
-  register: npm_version
-
-- name: print node version
-  debug:
-    msg: "npm version is {{ npm_version.stdout }}"
+  shell: npm -v
 
 - name: install pm2
   npm:

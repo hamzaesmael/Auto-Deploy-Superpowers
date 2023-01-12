@@ -6,7 +6,7 @@
 - name: Install nvm
   become: yes
   shell: >
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
   args:
     executable: /bin/bash
     chdir: "$HOME"
@@ -19,19 +19,10 @@
     mode: "0775"
     state: file
 
-- name: source bashrc
-  become: no
-  shell: >
-    source $HOME/.bashrc
-
 - name: Install node
   become: no
   shell: >
-    $HOME/.nvm/nvm.sh && nvm install {{ item }}
-  args:
-    executable: /bin/bash
-    chdir: "$HOME"
-    creates: "$HOME/.nvm/versions/{{ item }}"
+    ". $HOME/.bashrc && nvm install {{ item }}"
   loop:
     - 13.8.0
 

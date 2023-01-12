@@ -15,7 +15,7 @@
 - name: change permission
   become: yes
   file:
-    path: "$HOME/.nvm"
+    path: "$HOME/.nvm/nvm.sh"
     mode: "0775"
     state: file
     

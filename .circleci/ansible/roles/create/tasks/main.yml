@@ -1,8 +1,0 @@
-- name: create directory
-  become: true
-  file:
-    path: ~/{{ item }}
-    state: directory
-  with_items:
-    - workspace
-    - backend

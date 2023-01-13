@@ -411,7 +411,7 @@ jobs:
           name: Delete the old stack
           command: |
             export OldWorkflowID=$(curl --insecure https://kvdb.io/UieMt2AAJFwXs3CFpSvbva/old_workflow_id)
-            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
             then
             aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
             aws s3 rb s3://udapeople-${OldWorkflowID} --force

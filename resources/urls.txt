@@ -1,0 +1,5 @@
+github-repo: https://github.com/Mahmoudgalalz/AutoDeploy-monorepo/
+S3-Bucket: http://udapeople-2eac939.s3-website-us-west-2.amazonaws.com/index.html#/employees
+CloudFront: dbdppqyye72n4.cloudfront.net
+Backend-endpoint: http://34.211.88.150:3030/api/status
+Prometheus: http://35.86.141.168:9090/targets

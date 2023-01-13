@@ -192,7 +192,7 @@ jobs:
       - run:
           name: get The backend server ip
           command: |
-            cd .cimg/ansible
+            cd .circleci/ansible
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:project,Values=udapeople" \
@@ -201,7 +201,7 @@ jobs:
       - run:
           name: Configure backend infrastructure
           command: |
-            cd .cimg/ansible
+            cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}

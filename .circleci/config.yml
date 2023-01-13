@@ -345,7 +345,6 @@ jobs:
             if curl "${API_URL}/api/status" | grep "ok"
             then
               echo "Smoke test passed"
-              return 0
             else
               echo "Smoke test failed"
               exit 1
@@ -357,8 +356,6 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
               echo "Smoke test passed"
-              # change this to 0 to after fail
-              return 1
             else
               echo "Smoke test failed"
               exit 1
@@ -367,6 +364,52 @@ jobs:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations:
           workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
+
+  cloudfront-update:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: update cloudfront
+          command: |
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --stack-name InitialStack \
+            --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --tags project=udapeople
+      - destroy-environment:
+          workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
+  
+  cleanup-phase:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Get the Old stack id
+          command: |
+            export OldWorkflowID=$(aws cloudformation \
+                    list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                    --no-paginate --output text| cut -d '-' -f 2)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+            # Fetch the stack names          
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo Stack names: "${STACKS[@]}"
+      - run:
+          name: Delete the old stack
+          command: |
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+            then
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+              aws s3 rm s3://udapeople-${OldWorkflowID} --recursive
+              aws s3 rb s3://udapeople-${OldWorkflowID} --force
+            fi
 
   notify_on_success:
     docker:
@@ -396,7 +439,6 @@ workflows:
           requires:
             - build-backend
       - scan-frontend:
-          context: slack-secrets
           requires:
             - build-frontend
       - scan-backend:
@@ -428,11 +470,17 @@ workflows:
           requires:
             - deploy-frontend
             - deploy-backend
-
-      - notify_on_success:
+      - cloudfront-update:
           requires:
-            - deploy-infra
-            - config-infra
+            - smoke-test
+      - cleanup-phase:
+          requires:
+            - cloudfront-update
+      - notify_on_success:
+          context: slack-secrets
+          requires:
+            - cleanup-phase
+            - cloudfront-update
           filters:
             branches:
               only: master

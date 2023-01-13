@@ -417,15 +417,6 @@ jobs:
             else 
                 echo "No old stack to delete"
             fi
-
-  notify_on_success:
-    docker:
-      - image: cimg/base:current
-    steps:
-      - slack/notify:
-          event: pass
-          template: success_tagged_deployment_1
-          channel: cicd-alerts
           
   
 workflows:
@@ -483,11 +474,3 @@ workflows:
       - cleanup-phase:
           requires:
             - cloudfront-update
-      - notify_on_success:
-          context: slack-secrets
-          requires:
-            - cleanup-phase
-            - cloudfront-update
-          filters:
-            branches:
-              only: master

@@ -4,6 +4,23 @@ orbs:
   slack: circleci/slack@4.12.0
 
 commands:
+  install_aws_cli:
+    steps:
+      - run:
+          name: Install AWS CLI
+          command: |
+            sudo apt-get update -y
+            sudo apt-get install python3-pip -y
+            sudo pip3 install awscli
+  install_ansible:
+    steps:
+      - run:
+          name: Install Ansible
+          command: |
+            sudo apt-get update
+            sudo apt-get install software-properties-common -y
+            sudo apt-add-repository --yes --update ppa:ansible/ansible
+            sudo apt-get install ansible -y
   install_nodejs:
     steps:
       - run:
@@ -239,11 +256,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: [frontend-build]  
-      - run:
-          name: install dependencies
-          command: |
-            sudo apt update
-            sudo apt install awscli
+      - install_aws_cli
       - run:
           name: Get backend server ip
           command: |
@@ -269,19 +282,16 @@ jobs:
   
   deploy-backend:
     docker:
-      - image: python:3.8-alpine3.17
+      - image: cimg/base:latest
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
       - restore_cache:
           keys: [backend-build]
-      - run:
-          name: install dependencies
-          command: |
-            apk add --update ansible
-            apk add curl
-            pip3 install awscli
+      - install_nodejs
+      - install_aws_cli
+      - install_ansible
       - run:
           name: get backend ip
           command: |
@@ -360,7 +370,7 @@ jobs:
 
   notify_on_success:
     docker:
-      - image: cimg/base
+      - image: cimg/base:latest
     steps:
       - slack/notify:
           event: pass

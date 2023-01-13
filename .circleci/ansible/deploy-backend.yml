@@ -11,6 +11,7 @@
     - unarchive_result: ""
   environment:
       ENVIRONMENT: production
+      BACKEND_PORT: 3000
       TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
       TYPEORM_MIGRATIONS_DIR: "./migrations"
       TYPEORM_MIGRATIONS: "./migrations/*.js"

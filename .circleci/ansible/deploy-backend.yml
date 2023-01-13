@@ -2,20 +2,19 @@
 
 - name: "configuration play." 
   hosts: web
-  user: ubuntu
+  remote_user: ubuntu
   gather_facts: false
   vars:
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
-    - unarchive_result: ""
+
   environment:
       ENVIRONMENT: production
-      BACKEND_PORT: 3000
       TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
       TYPEORM_MIGRATIONS_DIR: "./migrations"
-      TYPEORM_MIGRATIONS: "./migrations/*.js"
-      TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
+      TYPEORM_MIGRATIONS: "./migrations/*{.ts,.js}"
+      TYPEORM_ENTITIES: "./modules/domain/**/*.entity{.ts,.js}"
       TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
       TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
       TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"

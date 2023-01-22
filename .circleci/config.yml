@@ -358,10 +358,10 @@ jobs:
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-east-1.amazonaws.com/#/employees"
             if curl -s ${URL} | grep "Welcome"
             then
-              echo "Smoke test passed"
+               "Smoke test passed"
             else
               echo "Smoke test failed"
-              exit 2
+              exit 1
             fi
       - destroy-environment:
           workflow-id: ${CIRCLE_WORKFLOW_ID:0:7}

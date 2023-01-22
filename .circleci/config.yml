@@ -283,13 +283,14 @@ jobs:
       - revert-migrations:
           workflow_id: migration-${CIRCLE_WORKFLOW_ID:0:7}
   
+  
   deploy-backend:
     docker:
       - image: cimg/base:current
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["bb:b7:0b:3c:79:c3:cf:01:31:eb:d0:97:a0:7a:54:68"]
+          fingerprints: ["aa:bb:96:c7:04:5b:d3:7e:d4:60:9a:24:c6:9e:74:ae"]
       - restore_cache:
           keys: [backend-build]
       - install_nodejs
@@ -318,7 +319,6 @@ jobs:
             tar -czf artifact.tar.gz dist/* package*
             cd ..
             cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
-
       - run:
           name: deploy backend
           command: |

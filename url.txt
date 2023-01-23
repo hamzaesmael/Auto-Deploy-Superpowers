@@ -1,5 +1,20 @@
-github-repo: https://github.com/hamzaesmael/udapeople
-S3-Bucket: http://udapeople-a8c5589.s3-website-us-east-1.amazonaws.com
-CloudFront: http://udapeople-7949103.s3-website-us-east-1.amazonaws.com/#/employees
-Backend-endpoint: http://18.208.37.129:3030/api/status
-Prometheus: ec2-44-201-225-51.compute-1.amazonaws.com
+github-repo:
+
+https://github.com/hamzaesmael/udapeople
+
+S3-Bucket:
+
+http://udapeople-7949103.s3-website-us-east-1.amazonaws.com
+http://udapeople-7949103.s3-website-us-east-1.amazonaws.com/#/employees
+
+CloudFront: 
+
+
+
+Backend-endpoint:
+
+http://18.208.37.129:3030/api/status
+
+Prometheus:
+
+

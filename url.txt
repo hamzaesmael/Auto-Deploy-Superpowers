@@ -4,8 +4,8 @@ https://github.com/hamzaesmael/udapeople
 
 S3-Bucket:
 
-http://udapeople-7949103.s3-website-us-east-1.amazonaws.com
-http://udapeople-7949103.s3-website-us-east-1.amazonaws.com/#/employees
+http://udapeople-f4fd774.s3-website-us-east-1.amazonaws.com
+
 
 CloudFront: 
 
@@ -13,7 +13,7 @@ CloudFront:
 
 Backend-endpoint:
 
-http://18.208.37.129:3030/api/status
+
 
 Prometheus:
 

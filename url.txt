@@ -5,16 +5,8 @@ https://github.com/hamzaesmael/udapeople
 S3-Bucket:
 
 http://udapeople-f4fd774.s3-website-us-east-1.amazonaws.com
-
-
 CloudFront: 
-
-
-
 Backend-endpoint:
-
-
-
 Prometheus:
 
 

@@ -1,5 +1,5 @@
 github-repo: https://github.com/hamzaesmael/udapeople
-S3-Bucket: 
-CloudFront: https://d14xd057c596v4.cloudfront.net
-Backend-endpoint: 
-Prometheus: 
+S3-Bucket: http://udapeople-b47f4ba.s3-website-us-east-1.amazonaws.com/#/employees
+CloudFront: http://d14xd057c596v4.cloudfront.net/
+Backend-endpoint: http://3.230.65.32:3030/api/status
+Prometheus: 107.23.5.164:9090/targets
